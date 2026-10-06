@@ -1,23 +1,38 @@
+import { RouterProvider, useRouter, Link } from './router.jsx';
+import { Header, Footer } from './components/Layout.jsx';
+import Home from './pages/Home.jsx';
+import CaseStudy from './pages/CaseStudy.jsx';
+import { bySlug } from './content/projects.js';
 
-import React from 'react';
-import Sidebar from './components/Sidebar';
-import Hero from './sections/Hero';
-import About from './sections/About';
-import Projects from './sections/Projects';
-import Resume from './sections/Resume';
-import Contact from './sections/Contact';
+function NotFound() {
+  return (
+    <section className="section wrap not-found">
+      <p className="eyebrow">404</p>
+      <h1>That page doesn’t exist.</h1>
+      <p>
+        <Link href="/">Back to the homepage</Link>
+      </p>
+    </section>
+  );
+}
+
+function Routes() {
+  const { path } = useRouter();
+  if (path === '/') return <Home />;
+  const m = path.match(/^\/work\/([a-z0-9-]+)$/);
+  if (m && bySlug[m[1]]) return <CaseStudy key={m[1]} slug={m[1]} />;
+  return <NotFound />;
+}
 
 export default function App() {
   return (
-    <div className="flex">
-      <Sidebar />
-      <main className="ml-64 w-full space-y-32">
-        <section id="home"><Hero /></section>
-        <section id="about"><About /></section>
-        <section id="projects"><Projects /></section>
-        <section id="resume"><Resume /></section>
-        {/*<section id="contact"><Contact /></section>*/}
+    <RouterProvider>
+      <a className="skip-link" href="#main">Skip to content</a>
+      <Header />
+      <main id="main" tabIndex="-1">
+        <Routes />
       </main>
-    </div>
+      <Footer />
+    </RouterProvider>
   );
 }
